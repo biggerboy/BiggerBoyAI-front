@@ -6,7 +6,7 @@
 
 This template should help get you started developing with Vue 3 in Vite.
 
-后端代码地址：https://github.com/biggerboy/BiggerBoyAI-front
+后端代码地址：https://github.com/biggerboy/BiggerBoyAI
 
 ## Recommended IDE Setup
 
