@@ -1,10 +1,12 @@
-# springai-demo-front
+# BiggerBoyAI-front
 
 关注公众号【BiggerBoy】，获取更多技术干货！
 
 ![BiggerBoy](./src/img/img.png)
 
 This template should help get you started developing with Vue 3 in Vite.
+
+后端代码地址：https://github.com/biggerboy/BiggerBoyAI-front
 
 ## Recommended IDE Setup
 
