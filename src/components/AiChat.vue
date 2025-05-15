@@ -44,6 +44,11 @@
     </aside>
     <main class="main-content">
       <div class="chat-container" ref="messagesContainer">
+        <div class="conversation-header" v-if="currentConversationId">
+          <div class="conversation-header-content">
+            <div class="conversation-id-value">{{ currentConversationId }}</div>
+          </div>
+        </div>
         <div class="chat-messages">
           <div v-if="messages.length === 0" class="welcome-message">
             <p class="welcome-message-title">
@@ -198,8 +203,16 @@ const fetchConversations = async () => {
     const res = await fetch('http://localhost:8080/conversations')
     const data = await res.json()
     conversations.value = data
+    // 如果有当前对话ID，确保它在列表中保持高亮
+    if (currentConversationId.value) {
+      const exists = data.some(c => c.conversationId === currentConversationId.value)
+      if (!exists) {
+        currentConversationId.value = null
+      }
+    }
   } catch (e) {
     conversations.value = []
+    currentConversationId.value = null
   }
 }
 
@@ -230,6 +243,7 @@ const handleScroll = () => {
 const startNewChat = () => {
   messages.value = []
   requestId.value = generateRequestId()
+  currentConversationId.value = requestId.value // 设置当前对话ID为新生成的requestId
   showNewChatBtn.value = false
 }
 
@@ -303,6 +317,8 @@ const sendMessage = async () => {
     }
     // AI消息流式加载结束，done设为true
     messages.value[messages.value.length - 1].done = true
+    // 刷新对话列表
+    await fetchConversations()
   } catch (error) {
     console.error('Error:', error)
     messages.value[messages.value.length - 1].content = '抱歉，发生了错误，请稍后重试。'
@@ -1013,6 +1029,62 @@ body{
 .sidebar-collapsed-newchat-btn:hover {
   background: #6ba9f6 !important;
   color: #fff;
+}
+
+.conversation-header {
+  position: sticky;
+  top: 0;
+  background: var(--dsr-bg);
+  border-bottom: 1px solid var(--dsr-border-2);
+  z-index: 10;
+  padding: 12px 0;
+}
+
+.conversation-header-content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.conversation-id-label {
+  color: var(--dsr-text-2);
+  font-size: 14px;
+}
+
+.conversation-id-value {
+  color: var(--dsr-text-1);
+  font-size: 16px;
+  font-weight: 600;
+  background: var(--dsr-button-grey-1);
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin: auto;
+}
+
+.copy-conversation-id-btn {
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: var(--dsr-text-3);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.copy-conversation-id-btn:hover {
+  background: var(--dsr-button-grey-1);
+  color: var(--dsr-text-1);
+}
+
+.copy-conversation-id-btn svg {
+  width: 16px;
+  height: 16px;
 }
 
 </style> 
