@@ -24,7 +24,7 @@
             :class="{ active: c.conversationId === currentConversationId }"
             @click="loadConversationMessages(c.conversationId)"
           >
-            <div class="conversation-id">{{ c.conversationId.slice(0, 8) }}...</div>
+            <div class="conversation-title">{{ c.title || '新对话' }}</div>
             <div class="conversation-date">{{ formatDate(c.createdAt) }}</div>
           </div>
         </div>
@@ -46,7 +46,7 @@
       <div class="chat-container" ref="messagesContainer">
         <div class="conversation-header" v-if="currentConversationId">
           <div class="conversation-header-content">
-            <div class="conversation-id-value">{{ currentConversationId }}</div>
+            <div class="conversation-title">{{ getCurrentConversationTitle() }}</div>
           </div>
         </div>
         <div class="chat-messages">
@@ -372,6 +372,11 @@ watch(messages.value, async () => {
   await nextTick()
   scrollToBottom()
 }, { deep: true })
+
+const getCurrentConversationTitle = () => {
+  const conversation = conversations.value.find(c => c.conversationId === currentConversationId.value)
+  return conversation ? conversation.title || '新对话' : '新对话'
+}
 </script>
 
 <style>
@@ -456,9 +461,13 @@ watch(messages.value, async () => {
   background: #eaf3ff;
   color: #2266bb;
 }
-.conversation-id {
-  font-weight: bold;
+.conversation-title {
+  font-weight: 600;
   color: #2266bb;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .conversation-date {
   color: #888;
@@ -1085,6 +1094,16 @@ body{
 .copy-conversation-id-btn svg {
   width: 16px;
   height: 16px;
+}
+
+.conversation-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--dsr-text-1);
+  background: var(--dsr-button-grey-1);
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin: auto;
 }
 
 </style> 
